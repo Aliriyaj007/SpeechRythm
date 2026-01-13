@@ -1,0 +1,3580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeechRythm | Intelligent Speaking Coach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            /* Default Theme (Ocean Blue) */
+            --color-primary: #1a73e8;
+            --color-primary-dark: #0d47a1;
+            --color-secondary: #34a853;
+            --color-secondary-dark: #2e7d32;
+            --color-warning: #fbbc04;
+            --color-warning-dark: #f57c00;
+            --color-danger: #ea4335;
+            --color-danger-dark: #c62828;
+            --color-surface: #ffffff;
+            --color-surface-variant: #f8f9fa;
+            --color-background: #f1f3f4;
+            --color-on-surface: #202124;
+            --color-on-surface-variant: #5f6368;
+            --color-on-primary: #ffffff;
+            --color-border: #dadce0;
+            --color-shadow: rgba(0, 0, 0, 0.1);
+            --color-highlight: rgba(26, 115, 232, 0.1);
+            --color-heatmap-low: #d3e3fd;
+            --color-heatmap-medium: #8ab4f8;
+            --color-heatmap-high: #1a73e8;
+            
+            /* Typography */
+            --font-primary: 'Roboto', sans-serif;
+            --font-mono: 'Roboto Mono', monospace;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 2rem;
+            --font-size-4xl: 2.5rem;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-full: 999px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px var(--color-shadow);
+            --shadow-md: 0 4px 12px var(--color-shadow);
+            --shadow-lg: 0 8px 24px var(--color-shadow);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-medium: 300ms ease;
+            --transition-slow: 500ms ease;
+            
+            /* Layout */
+            --header-height: 64px;
+            --sidebar-width: 320px;
+            --controls-height: 72px;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            color: var(--color-on-surface);
+            background-color: var(--color-background);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color var(--transition-medium), color var(--transition-medium);
+        }
+
+        /* Utility Classes */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .gap-sm {
+            gap: var(--space-sm);
+        }
+
+        .gap-md {
+            gap: var(--space-md);
+        }
+
+        .gap-lg {
+            gap: var(--space-lg);
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .font-mono {
+            font-family: var(--font-mono);
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        /* Component Styles */
+        button, .btn {
+            font-family: var(--font-primary);
+            font-size: var(--font-size-md);
+            font-weight: 500;
+            background-color: var(--color-primary);
+            color: var(--color-on-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-lg);
+            cursor: pointer;
+            transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            user-select: none;
+        }
+
+        button:hover, .btn:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active, .btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        button:disabled, .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        button.secondary, .btn.secondary {
+            background-color: var(--color-secondary);
+        }
+
+        button.secondary:hover, .btn.secondary:hover {
+            background-color: var(--color-secondary-dark);
+        }
+
+        button.outline, .btn.outline {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        button.outline:hover, .btn.outline:hover {
+            background-color: var(--color-highlight);
+        }
+
+        input, textarea, select {
+            font-family: var(--font-primary);
+            font-size: var(--font-size-md);
+            color: var(--color-on-surface);
+            background-color: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 8px;
+            background: var(--color-border);
+            border-radius: var(--radius-full);
+            padding: 0;
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-fast);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: var(--shadow-md);
+        }
+
+        .card {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--transition-medium), transform var(--transition-medium);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-xs) var(--space-sm);
+            background-color: var(--color-surface-variant);
+            color: var(--color-on-surface-variant);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+        }
+
+        .badge.primary {
+            background-color: var(--color-primary);
+            color: var(--color-on-primary);
+        }
+
+        .badge.secondary {
+            background-color: var(--color-secondary);
+            color: var(--color-on-primary);
+        }
+
+        .badge.warning {
+            background-color: var(--color-warning);
+            color: var(--color-on-surface);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-border);
+            transition: var(--transition-fast);
+            border-radius: var(--radius-full);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--color-surface);
+            transition: var(--transition-fast);
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--color-primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-medium), visibility var(--transition-medium);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform var(--transition-medium);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            margin-bottom: var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: var(--font-size-xl);
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-md);
+        }
+
+        .modal-close:hover {
+            background-color: var(--color-surface-variant);
+        }
+
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: var(--space-lg);
+        }
+
+        .tab {
+            padding: var(--space-sm) var(--space-lg);
+            background: none;
+            border: none;
+            color: var(--color-on-surface-variant);
+            font-weight: 500;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--color-primary);
+            border-radius: var(--radius-full) var(--radius-full) 0 0;
+        }
+
+        .pill {
+            padding: var(--space-xs) var(--space-md);
+            background-color: var(--color-surface-variant);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            color: var(--color-on-surface-variant);
+            border: none;
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .pill.active {
+            background-color: var(--color-primary);
+            color: var(--color-on-primary);
+        }
+
+        .sentence-item {
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xs);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            border-left: 3px solid transparent;
+        }
+
+        .sentence-item:hover {
+            background-color: var(--color-surface-variant);
+        }
+
+        .sentence-item.long {
+            border-left-color: var(--color-warning);
+            background-color: rgba(251, 188, 4, 0.05);
+        }
+
+        .sentence-item.active {
+            background-color: var(--color-highlight);
+            border-left-color: var(--color-primary);
+        }
+
+        .highlight {
+            background-color: rgba(251, 188, 4, 0.3);
+            padding: 0 2px;
+            border-radius: 2px;
+            transition: background-color var(--transition-fast);
+        }
+
+        .highlight.active {
+            background-color: rgba(26, 115, 232, 0.3);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .heatmap-bar {
+            height: 8px;
+            border-radius: var(--radius-full);
+            margin: var(--space-xs) 0;
+            transition: width var(--transition-slow);
+        }
+
+        .section-pill {
+            padding: var(--space-sm) var(--space-md);
+            background-color: var(--color-surface-variant);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .section-pill:hover {
+            background-color: var(--color-border);
+        }
+
+        .section-pill.active {
+            background-color: var(--color-highlight);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--color-border);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin: var(--space-md) 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--color-primary);
+            border-radius: var(--radius-full);
+            transition: width var(--transition-medium);
+        }
+
+        .time-display {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            text-align: center;
+            line-height: 1;
+            margin: var(--space-md) 0;
+        }
+
+        .pacing-dot {
+            width: 24px;
+            height: 24px;
+            background-color: var(--color-primary);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 0 6px rgba(26, 115, 232, 0.2);
+            transition: left var(--transition-slow), background-color var(--transition-fast);
+        }
+
+        /* Layout Styles */
+        #app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            height: var(--header-height);
+            background-color: var(--color-surface);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--color-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-on-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .theme-selector {
+            position: relative;
+        }
+
+        .theme-btn {
+            background: none;
+            border: none;
+            font-size: var(--font-size-xl);
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-md);
+        }
+
+        .theme-btn:hover {
+            background-color: var(--color-surface-variant);
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-md);
+            width: 280px;
+            z-index: 10;
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .theme-dropdown.active {
+            display: grid;
+        }
+
+        .theme-option {
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 2px solid var(--color-border);
+            cursor: pointer;
+            transition: border-color var(--transition-fast), transform var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .theme-option:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-primary);
+        }
+
+        .theme-option.active {
+            border-color: var(--color-primary);
+            background-color: var(--color-highlight);
+        }
+
+        .theme-preview {
+            display: flex;
+            height: 20px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .theme-color {
+            flex: 1;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: var(--space-lg) 0;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .controls-panel {
+            width: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+            margin-left: var(--space-lg);
+        }
+
+        .panel-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .panel-title {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--font-size-sm);
+            color: var(--color-on-surface-variant);
+        }
+
+        .control-value {
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .stat-card {
+            padding: var(--space-md);
+            background-color: var(--color-surface-variant);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-on-surface-variant);
+        }
+
+        #speechInput {
+            flex: 1;
+            font-family: var(--font-primary);
+            font-size: var(--font-size-md);
+            line-height: 1.6;
+            resize: none;
+            padding: var(--space-lg);
+            background-color: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            transition: border-color var(--transition-fast);
+        }
+
+        #speechInput:focus {
+            border-color: var(--color-primary);
+        }
+
+        .editor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .heatmap-container {
+            height: 30px;
+            display: flex;
+            gap: 2px;
+            margin-top: var(--space-sm);
+        }
+
+        .heatmap-segment {
+            flex: 1;
+            border-radius: 2px;
+            transition: background-color var(--transition-fast);
+        }
+
+        .practice-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-background);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-xl);
+            transform: translateY(100%);
+            transition: transform var(--transition-medium);
+        }
+
+        .practice-overlay.active {
+            transform: translateY(0);
+        }
+
+        .practice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .practice-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2xl);
+        }
+
+        .practice-prompter {
+            font-size: var(--font-size-lg);
+            line-height: 1.8;
+            max-width: 800px;
+            text-align: center;
+            padding: var(--space-xl);
+            background-color: var(--color-surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .practice-timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .practice-controls {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .pacing-track {
+            width: 100%;
+            max-width: 600px;
+            height: 4px;
+            background-color: var(--color-border);
+            border-radius: var(--radius-full);
+            position: relative;
+            margin: var(--space-md) 0;
+        }
+
+        footer {
+            background-color: var(--color-surface);
+            padding: var(--space-lg) 0;
+            margin-top: var(--space-xl);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: var(--space-xl);
+        }
+
+        .footer-link {
+            color: var(--color-on-surface-variant);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-link:hover {
+            color: var(--color-primary);
+        }
+
+        .credits {
+            color: var(--color-on-surface-variant);
+            font-size: var(--font-size-sm);
+        }
+
+        .credits a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .credits a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .controls-panel {
+                width: 100%;
+                margin-left: 0;
+                margin-top: var(--space-lg);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --space-lg: 1rem;
+                --space-xl: 1.5rem;
+            }
+            
+            .container {
+                padding: 0 var(--space-md);
+            }
+            
+            .header-actions {
+                gap: var(--space-sm);
+            }
+            
+            .theme-dropdown {
+                width: 260px;
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .practice-content {
+                gap: var(--space-xl);
+            }
+            
+            .practice-prompter {
+                font-size: var(--font-size-md);
+                padding: var(--space-lg);
+            }
+            
+            .time-display {
+                font-size: var(--font-size-3xl);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                height: auto;
+                padding: var(--space-sm) 0;
+                gap: var(--space-sm);
+            }
+            
+            .logo {
+                font-size: var(--font-size-lg);
+            }
+            
+            .editor-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .practice-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: var(--space-sm);
+            }
+        }
+
+        /* Theme Definitions */
+        .theme-ocean {
+            --color-primary: #1a73e8;
+            --color-primary-dark: #0d47a1;
+            --color-secondary: #34a853;
+            --color-secondary-dark: #2e7d32;
+            --color-warning: #fbbc04;
+            --color-danger: #ea4335;
+            --color-surface: #ffffff;
+            --color-background: #f1f3f4;
+            --color-on-surface: #202124;
+        }
+
+        .theme-dark {
+            --color-primary: #8ab4f8;
+            --color-primary-dark: #669df6;
+            --color-secondary: #81c995;
+            --color-secondary-dark: #5bb974;
+            --color-warning: #fdd663;
+            --color-danger: #f28b82;
+            --color-surface: #202124;
+            --color-surface-variant: #303134;
+            --color-background: #171717;
+            --color-on-surface: #e8eaed;
+            --color-on-surface-variant: #9aa0a6;
+            --color-border: #3c4043;
+            --color-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-nature {
+            --color-primary: #0b8043;
+            --color-primary-dark: #0a5c2d;
+            --color-secondary: #f6bf26;
+            --color-secondary-dark: #e6a919;
+            --color-warning: #e67c73;
+            --color-danger: #d50000;
+            --color-surface: #ffffff;
+            --color-background: #e8f5e9;
+            --color-on-surface: #1b5e20;
+            --color-on-surface-variant: #2e7d32;
+        }
+
+        .theme-sunset {
+            --color-primary: #e8710a;
+            --color-primary-dark: #c56007;
+            --color-secondary: #ea80fc;
+            --color-secondary-dark: #d05ce8;
+            --color-warning: #ffd54f;
+            --color-danger: #ff6f60;
+            --color-surface: #fff8e1;
+            --color-background: #ffecb3;
+            --color-on-surface: #5d4037;
+            --color-on-surface-variant: #8d6e63;
+        }
+
+        .theme-midnight {
+            --color-primary: #bb86fc;
+            --color-primary-dark: #9a67ea;
+            --color-secondary: #03dac6;
+            --color-secondary-dark: #00b9a9;
+            --color-warning: #ffb74d;
+            --color-danger: #cf6679;
+            --color-surface: #121212;
+            --color-surface-variant: #1e1e1e;
+            --color-background: #000000;
+            --color-on-surface: #ffffff;
+            --color-on-surface-variant: #bbbbbb;
+            --color-border: #333333;
+        }
+
+        .theme-berry {
+            --color-primary: #d81b60;
+            --color-primary-dark: #ad1457;
+            --color-secondary: #ab47bc;
+            --color-secondary-dark: #8e24aa;
+            --color-warning: #ffca28;
+            --color-danger: #ff3d00;
+            --color-surface: #fce4ec;
+            --color-background: #f8bbd9;
+            --color-on-surface: #880e4f;
+            --color-on-surface-variant: #ad1457;
+        }
+
+        .theme-oceanic {
+            --color-primary: #00acc1;
+            --color-primary-dark: #00838f;
+            --color-secondary: #80deea;
+            --color-secondary-dark: #4dd0e1;
+            --color-warning: #ffd600;
+            --color-danger: #ff8a65;
+            --color-surface: #e1f5fe;
+            --color-background: #b3e5fc;
+            --color-on-surface: #006064;
+            --color-on-surface-variant: #00838f;
+        }
+
+        .theme-classic {
+            --color-primary: #5c6bc0;
+            --color-primary-dark: #3949ab;
+            --color-secondary: #26a69a;
+            --color-secondary-dark: #00897b;
+            --color-warning: #ffa726;
+            --color-danger: #ef5350;
+            --color-surface: #f5f5f5;
+            --color-background: #eeeeee;
+            --color-on-surface: #212121;
+            --color-on-surface-variant: #616161;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <div class="container header-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-microphone-alt"></i>
+                    </div>
+                    <span>SpeechRythm</span>
+                </a>
+                
+                <div class="header-actions">
+                    <button id="practiceBtn" class="secondary">
+                        <i class="fas fa-play"></i>
+                        Practice Mode
+                    </button>
+                    
+                    <div class="theme-selector">
+                        <button class="theme-btn" id="themeToggleBtn" aria-label="Change theme">
+                            <i class="fas fa-palette"></i>
+                        </button>
+                        <div class="theme-dropdown" id="themeDropdown">
+                            <!-- Themes will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <button id="settingsBtn" class="outline" aria-label="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    
+                    <button id="guideBtn" class="outline" aria-label="User Guide">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content container">
+            <!-- Left Panel: Editor -->
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Your Speech
+                    </h2>
+                    <div class="editor-actions">
+                        <button id="clearBtn" class="outline">
+                            <i class="fas fa-trash-alt"></i>
+                            Clear
+                        </button>
+                        <button id="exampleBtn" class="outline">
+                            <i class="fas fa-lightbulb"></i>
+                            Load Example
+                        </button>
+                        <button id="exportBtn" class="outline">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                        <button id="importBtn" class="outline">
+                            <i class="fas fa-upload"></i>
+                            Import
+                        </button>
+                    </div>
+                </div>
+                
+                <textarea 
+                    id="speechInput" 
+                    placeholder="Paste or type your speech here... You'll see reading time instantly. Try adding (PAUSE) or (SLOW) for practice cues."
+                    spellcheck="true"
+                ></textarea>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            <i class="fas fa-chart-line"></i>
+                            Speech Heatmap
+                        </h3>
+                    </div>
+                    <div id="heatmapContainer" class="heatmap-container">
+                        <!-- Heatmap bars will be generated by JavaScript -->
+                    </div>
+                    <div class="control-label">
+                        <span>Sentence length visualization: shorter → longer</span>
+                        <div class="flex gap-sm">
+                            <div style="width: 12px; height: 12px; background-color: var(--color-heatmap-low); border-radius: 2px;"></div>
+                            <div style="width: 12px; height: 12px; background-color: var(--color-heatmap-medium); border-radius: 2px;"></div>
+                            <div style="width: 12px; height: 12px; background-color: var(--color-heatmap-high); border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Controls & Insights -->
+            <div class="controls-panel">
+                <!-- Time Control Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            <i class="fas fa-clock"></i>
+                            Timing Controls
+                        </h3>
+                    </div>
+                    
+                    <div class="time-display" id="timeDisplay">
+                        0:00
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <label for="wpmSlider">Speaking Rate</label>
+                            <span class="control-value" id="wpmValue">150 WPM</span>
+                        </div>
+                        <input 
+                            type="range" 
+                            id="wpmSlider" 
+                            min="80" 
+                            max="250" 
+                            step="5" 
+                            value="150"
+                        >
+                        <div class="control-label">
+                            <span>Slow (80)</span>
+                            <span>Fast (250)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <label for="targetTime">Target Time</label>
+                            <span class="control-value" id="targetTimeValue">10:00</span>
+                        </div>
+                        <input 
+                            type="range" 
+                            id="targetTime" 
+                            min="1" 
+                            max="60" 
+                            step="1" 
+                            value="10"
+                        >
+                        <div class="control-label">
+                            <span>Short (1 min)</span>
+                            <span>Long (60 min)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="control-label">
+                        <span>Progress</span>
+                        <span id="progressText">0% of target</span>
+                    </div>
+                </div>
+                
+                <!-- Statistics Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Statistics
+                        </h3>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="wordCount">0</div>
+                            <div class="stat-label">Words</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="sentenceCount">0</div>
+                            <div class="stat-label">Sentences</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="paragraphCount">0</div>
+                            <div class="stat-label">Paragraphs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="readingTime">0:00</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Long Sentences Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Long Sentences
+                            <span class="badge warning" id="longSentenceCount">0</span>
+                        </h3>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <label for="sentenceThreshold">Threshold</label>
+                            <span class="control-value" id="thresholdValue">25 words</span>
+                        </div>
+                        <input 
+                            type="range" 
+                            id="sentenceThreshold" 
+                            min="10" 
+                            max="40" 
+                            step="1" 
+                            value="25"
+                        >
+                    </div>
+                    
+                    <div id="longSentencesList" class="panel-section" style="max-height: 200px; overflow-y: auto;">
+                        <div class="text-center" style="padding: var(--space-lg); color: var(--color-on-surface-variant);">
+                            <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: var(--space-sm);"></i>
+                            <p>No long sentences detected</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Practice Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            <i class="fas fa-running"></i>
+                            Practice Settings
+                        </h3>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Metronome</span>
+                            <label class="switch">
+                                <input type="checkbox" id="metronomeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Pacing Dot</span>
+                            <label class="switch">
+                                <input type="checkbox" id="pacingDotToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Highlight Active Sentence</span>
+                            <label class="switch">
+                                <input type="checkbox" id="highlightToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <label for="practiceMode">Practice Mode</label>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="pill active" data-mode="guidance">Guidance</button>
+                            <button class="pill" data-mode="pressure">Pressure</button>
+                            <button class="pill" data-mode="segment">Segment</button>
+                        </div>
+                    </div>
+                    
+                    <button id="startPracticeBtn" class="secondary w-full">
+                        <i class="fas fa-play-circle"></i>
+                        Start Practice Session
+                    </button>
+                </div>
+                
+                <!-- Sections Manager -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="panel-title">
+                            <i class="fas fa-layer-group"></i>
+                            Speech Sections
+                            <button id="addSectionBtn" class="badge primary" style="margin-left: auto;">
+                                <i class="fas fa-plus"></i>
+                                Add
+                            </button>
+                        </h3>
+                    </div>
+                    
+                    <div id="sectionsList" class="panel-section">
+                        <div class="text-center" style="padding: var(--space-md); color: var(--color-on-surface-variant);">
+                            <p>No sections defined. Click "Add" to create your first section.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Practice Overlay -->
+        <div class="practice-overlay" id="practiceOverlay">
+            <div class="practice-header">
+                <div>
+                    <h2 class="panel-title">
+                        <i class="fas fa-running"></i>
+                        Practice Session
+                    </h2>
+                    <p>Mode: <span id="practiceModeLabel">Guidance</span></p>
+                </div>
+                <div class="flex gap-md">
+                    <button id="practiceExitBtn" class="outline">
+                        <i class="fas fa-times"></i>
+                        Exit Practice
+                    </button>
+                </div>
+            </div>
+            
+            <div class="practice-content">
+                <div class="practice-timer-container">
+                    <div class="time-display" id="practiceTimer">
+                        0:00
+                    </div>
+                    <div class="pacing-track" id="pacingTrack">
+                        <div class="pacing-dot" id="pacingDot"></div>
+                    </div>
+                    <div class="flex gap-md">
+                        <button id="practicePlayBtn" class="secondary">
+                            <i class="fas fa-play"></i>
+                            Start
+                        </button>
+                        <button id="practicePauseBtn" class="outline" disabled>
+                            <i class="fas fa-pause"></i>
+                            Pause
+                        </button>
+                        <button id="practiceResetBtn" class="outline">
+                            <i class="fas fa-redo"></i>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="practice-prompter" id="practicePrompter">
+                    <!-- Speech content will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container footer-content">
+                <div class="footer-links">
+                    <a href="#" class="footer-link" id="guideLink">User Guide</a>
+                    <a href="#" class="footer-link" id="keyboardLink">Keyboard Shortcuts</a>
+                    <a href="#" class="footer-link" id="tipsLink">Speaking Tips</a>
+                    <a href="#" class="footer-link" id="aboutLink">About SpeechRythm</a>
+                </div>
+                
+                <div class="credits">
+                    Made with ❤️ by <a href="https://github.com/Aliriyaj007" target="_blank">Aliriyaj007</a>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modals -->
+        <div class="modal-overlay" id="settingsModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="panel-title">
+                        <i class="fas fa-cog"></i>
+                        Settings & Customization
+                    </h2>
+                    <button class="modal-close" id="settingsCloseBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="tab-container">
+                    <button class="tab active" data-tab="ui">UI Settings</button>
+                    <button class="tab" data-tab="behavior">Behavior</button>
+                    <button class="tab" data-tab="advanced">Advanced</button>
+                </div>
+                
+                <div class="tab-content" id="uiTab">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Font Size</span>
+                            <span class="control-value" id="fontSizeValue">Medium</span>
+                        </div>
+                        <input type="range" id="fontSizeSlider" min="0" max="3" step="1" value="1">
+                        <div class="control-label">
+                            <span>Small</span>
+                            <span>Large</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Editor Line Height</span>
+                            <span class="control-value" id="lineHeightValue">1.6</span>
+                        </div>
+                        <input type="range" id="lineHeightSlider" min="12" max="24" step="1" value="16">
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Show Word Count in Editor</span>
+                            <label class="switch">
+                                <input type="checkbox" id="showWordCountToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Show Heatmap</span>
+                            <label class="switch">
+                                <input type="checkbox" id="showHeatmapToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Auto-save to Browser</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autosaveToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="behaviorTab" style="display: none;">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Auto-calculate on Input</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autoCalculateToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Auto-highlight Long Sentences</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autoHighlightToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Use Markup Parsing (PAUSE, SLOW)</span>
+                            <label class="switch">
+                                <input type="checkbox" id="markupToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <label for="defaultWPM">Default WPM</label>
+                            <span class="control-value" id="defaultWPMValue">150</span>
+                        </div>
+                        <input type="range" id="defaultWPM" min="80" max="250" step="5" value="150">
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <label for="defaultTargetTime">Default Target Time (minutes)</label>
+                            <input type="number" id="defaultTargetTime" min="1" max="120" value="10" style="width: 80px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="advancedTab" style="display: none;">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Enable Keyboard Shortcuts</span>
+                            <label class="switch">
+                                <input type="checkbox" id="keyboardShortcutsToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Enable Performance Mode (Reduces animations)</span>
+                            <label class="switch">
+                                <input type="checkbox" id="performanceModeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Enable Web Audio API for Metronome</span>
+                            <label class="switch">
+                                <input type="checkbox" id="webAudioToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Reset All Settings</span>
+                            <button id="resetSettingsBtn" class="outline">
+                                <i class="fas fa-undo"></i>
+                                Reset to Defaults
+                            </button>
+                        </div>
+                        
+                        <div class="control-label">
+                            <span>Export/Import Settings</span>
+                            <div class="flex gap-sm">
+                                <button id="exportSettingsBtn" class="outline">
+                                    <i class="fas fa-download"></i>
+                                    Export
+                                </button>
+                                <button id="importSettingsBtn" class="outline">
+                                    <i class="fas fa-upload"></i>
+                                    Import
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: var(--space-xl); text-align: center;">
+                    <button id="saveSettingsBtn" class="primary">
+                        <i class="fas fa-check"></i>
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-overlay" id="guideModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="panel-title">
+                        <i class="fas fa-question-circle"></i>
+                        SpeechRythm User Guide
+                    </h2>
+                    <button class="modal-close" id="guideCloseBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="panel-section">
+                    <h3>What is SpeechRythm?</h3>
+                    <p>SpeechRythm is a powerful speaking coach that helps you prepare and practice speeches to fit within time limits. It provides real-time feedback on pacing, sentence complexity, and delivery.</p>
+                    
+                    <h3>Getting Started</h3>
+                    <ol style="margin-left: var(--space-lg); margin-bottom: var(--space-md);">
+                        <li><strong>Type or paste</strong> your speech into the editor</li>
+                        <li><strong>Adjust the WPM slider</strong> to match your speaking pace</li>
+                        <li><strong>View your reading time</strong> instantly in the time display</li>
+                        <li><strong>Check long sentences</strong> that might need simplification</li>
+                        <li><strong>Use Practice Mode</strong> to rehearse with visual and auditory guides</li>
+                    </ol>
+                    
+                    <h3>Key Features</h3>
+                    <ul style="margin-left: var(--space-lg); margin-bottom: var(--space-md);">
+                        <li><strong>Real-time Timing:</strong> See reading time update as you type</li>
+                        <li><strong>Sentence Analysis:</strong> Highlights overly long sentences</li>
+                        <li><strong>Heatmap Visualization:</strong> See sentence length distribution</li>
+                        <li><strong>Practice Mode:</strong> Rehearse with metronome and pacing dot</li>
+                        <li><strong>Speech Sections:</strong> Break your speech into timed segments</li>
+                        <li><strong>Customization:</strong> Adjust UI, behavior, and themes</li>
+                    </ul>
+                    
+                    <h3>Advanced Usage</h3>
+                    <p>Use special markup in your speech for practice cues:</p>
+                    <ul style="margin-left: var(--space-lg); margin-bottom: var(--space-md);">
+                        <li><code>(PAUSE)</code> - Adds a 2-second pause during practice</li>
+                        <li><code>(SLOW)</code> - Reduces pace by 30% for the next sentence</li>
+                        <li><code>(EMPHASIS)</code> - Highlights text for emphasis</li>
+                    </ul>
+                    
+                    <h3>Import & Export</h3>
+                    <p>Save your speeches and settings using the Export button. Import them later to continue working. All data stays on your device.</p>
+                    
+                    <h3>Need Help?</h3>
+                    <p>Check the Settings panel for customization options. Try different themes to find your preferred look. Use keyboard shortcuts for faster workflow.</p>
+                </div>
+                
+                <div class="text-center" style="margin-top: var(--space-xl);">
+                    <button id="closeGuideBtn" class="primary">
+                        <i class="fas fa-check"></i>
+                        Got it!
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-overlay" id="importExportModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="panel-title" id="importExportTitle">
+                        <i class="fas fa-file-export"></i>
+                        Export Speech
+                    </h2>
+                    <button class="modal-close" id="importExportCloseBtn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="panel-section">
+                    <div id="exportContent" style="display: block;">
+                        <p>Export your speech, sections, and settings to a JSON file for backup or transfer.</p>
+                        
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Include Settings</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="includeSettingsToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="control-label">
+                                <span>Include Sections</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="includeSectionsToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="control-label">
+                                <span>Include Practice History</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="includeHistoryToggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: var(--space-lg);">
+                            <button id="generateExportBtn" class="primary w-full">
+                                <i class="fas fa-download"></i>
+                                Generate & Download Export File
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="importContent" style="display: none;">
+                        <p>Import a previously exported SpeechRythm file to restore your speech and settings.</p>
+                        
+                        <div class="control-group">
+                            <label for="importFile">Select JSON File</label>
+                            <input type="file" id="importFile" accept=".json,application/json">
+                        </div>
+                        
+                        <div id="importPreview" style="display: none; margin-top: var(--space-lg); padding: var(--space-md); background-color: var(--color-surface-variant); border-radius: var(--radius-md);">
+                            <h4>Import Preview</h4>
+                            <p id="importPreviewText"></p>
+                        </div>
+                        
+                        <div style="margin-top: var(--space-lg);">
+                            <button id="performImportBtn" class="primary w-full" disabled>
+                                <i class="fas fa-upload"></i>
+                                Import File
+                            </button>
+                        </div>
+                        
+                        <div class="text-center" style="margin-top: var(--space-md);">
+                            <p class="badge warning" id="importWarning" style="display: none;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Importing will replace current speech and settings
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-container" style="margin-top: var(--space-xl);">
+                    <button class="tab active" data-ie-tab="export">Export</button>
+                    <button class="tab" data-ie-tab="import">Import</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hidden file input for import -->
+        <input type="file" id="hiddenImportFile" accept=".json,application/json" style="display: none;">
+        
+        <!-- Audio context for metronome (hidden) -->
+        <audio id="metronomeClick" preload="auto" style="display: none;">
+            <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ..." type="audio/wav">
+        </audio>
+    </div>
+
+    <script>
+        // SpeechRythm - Complete Single File Application
+        // Modular JavaScript Architecture using IIFE Pattern
+        
+        (function() {
+            'use strict';
+            
+            // ==================== MODULE: STATE MANAGEMENT ====================
+            const StateManager = (function() {
+                // Application state
+                let state = {
+                    // Speech content
+                    speechText: '',
+                    
+                    // Timing settings
+                    wordsPerMinute: 150,
+                    targetTimeMinutes: 10,
+                    
+                    // Analysis settings
+                    longSentenceThreshold: 25,
+                    
+                    // Practice settings
+                    practiceMode: 'guidance', // guidance, pressure, segment
+                    metronomeEnabled: false,
+                    pacingDotEnabled: true,
+                    highlightActiveSentence: true,
+                    isPracticing: false,
+                    practiceTimer: 0,
+                    practiceInterval: null,
+                    currentSentenceIndex: 0,
+                    
+                    // Speech sections
+                    sections: [],
+                    currentSectionIndex: -1,
+                    
+                    // UI settings
+                    theme: 'ocean',
+                    fontSize: 1, // 0: small, 1: medium, 2: large, 3: xlarge
+                    lineHeight: 1.6,
+                    showWordCount: true,
+                    showHeatmap: true,
+                    autoSave: true,
+                    
+                    // Behavior settings
+                    autoCalculate: true,
+                    autoHighlight: true,
+                    parseMarkup: true,
+                    
+                    // Advanced settings
+                    keyboardShortcuts: true,
+                    performanceMode: false,
+                    webAudioEnabled: true,
+                    
+                    // Derived data (cached for performance)
+                    words: 0,
+                    sentences: [],
+                    readingTimeSeconds: 0,
+                    longSentences: [],
+                    heatmapData: []
+                };
+                
+                // Previous state for undo/redo (simplified)
+                let previousState = null;
+                
+                // Save state to localStorage
+                function saveToStorage() {
+                    if (!state.autoSave) return;
+                    
+                    try {
+                        const saveData = {
+                            speechText: state.speechText,
+                            wordsPerMinute: state.wordsPerMinute,
+                            targetTimeMinutes: state.targetTimeMinutes,
+                            longSentenceThreshold: state.longSentenceThreshold,
+                            theme: state.theme,
+                            fontSize: state.fontSize,
+                            lineHeight: state.lineHeight,
+                            sections: state.sections,
+                            settings: {
+                                showWordCount: state.showWordCount,
+                                showHeatmap: state.showHeatmap,
+                                autoCalculate: state.autoCalculate,
+                                autoHighlight: state.autoHighlight,
+                                parseMarkup: state.parseMarkup,
+                                keyboardShortcuts: state.keyboardShortcuts,
+                                performanceMode: state.performanceMode,
+                                webAudioEnabled: state.webAudioEnabled
+                            }
+                        };
+                        
+                        localStorage.setItem('speechrythm_state', JSON.stringify(saveData));
+                    } catch (e) {
+                        console.warn('Could not save to localStorage:', e);
+                    }
+                }
+                
+                // Load state from localStorage
+                function loadFromStorage() {
+                    try {
+                        const saved = localStorage.getItem('speechrythm_state');
+                        if (!saved) return;
+                        
+                        const data = JSON.parse(saved);
+                        
+                        // Restore state
+                        state.speechText = data.speechText || '';
+                        state.wordsPerMinute = data.wordsPerMinute || 150;
+                        state.targetTimeMinutes = data.targetTimeMinutes || 10;
+                        state.longSentenceThreshold = data.longSentenceThreshold || 25;
+                        state.theme = data.theme || 'ocean';
+                        state.fontSize = data.fontSize || 1;
+                        state.lineHeight = data.lineHeight || 1.6;
+                        state.sections = data.sections || [];
+                        
+                        // Restore settings
+                        if (data.settings) {
+                            state.showWordCount = data.settings.showWordCount !== undefined ? data.settings.showWordCount : true;
+                            state.showHeatmap = data.settings.showHeatmap !== undefined ? data.settings.showHeatmap : true;
+                            state.autoCalculate = data.settings.autoCalculate !== undefined ? data.settings.autoCalculate : true;
+                            state.autoHighlight = data.settings.autoHighlight !== undefined ? data.settings.autoHighlight : true;
+                            state.parseMarkup = data.settings.parseMarkup !== undefined ? data.settings.parseMarkup : true;
+                            state.keyboardShortcuts = data.settings.keyboardShortcuts !== undefined ? data.settings.keyboardShortcuts : true;
+                            state.performanceMode = data.settings.performanceMode !== undefined ? data.settings.performanceMode : false;
+                            state.webAudioEnabled = data.settings.webAudioEnabled !== undefined ? data.settings.webAudioEnabled : true;
+                        }
+                        
+                        return true;
+                    } catch (e) {
+                        console.warn('Could not load from localStorage:', e);
+                        return false;
+                    }
+                }
+                
+                // Update state with changes
+                function updateState(updates) {
+                    previousState = {...state};
+                    
+                    // Apply updates
+                    Object.assign(state, updates);
+                    
+                    // Trigger state change event
+                    window.dispatchEvent(new CustomEvent('statechange', { detail: updates }));
+                    
+                    // Auto-save if enabled
+                    if (state.autoSave) {
+                        saveToStorage();
+                    }
+                }
+                
+                // Get current state
+                function getState() {
+                    return {...state};
+                }
+                
+                // Reset to defaults
+                function resetToDefaults() {
+                    const defaults = {
+                        speechText: '',
+                        wordsPerMinute: 150,
+                        targetTimeMinutes: 10,
+                        longSentenceThreshold: 25,
+                        practiceMode: 'guidance',
+                        metronomeEnabled: false,
+                        pacingDotEnabled: true,
+                        highlightActiveSentence: true,
+                        isPracticing: false,
+                        practiceTimer: 0,
+                        currentSentenceIndex: 0,
+                        sections: [],
+                        currentSectionIndex: -1,
+                        theme: 'ocean',
+                        fontSize: 1,
+                        lineHeight: 1.6,
+                        showWordCount: true,
+                        showHeatmap: true,
+                        autoSave: true,
+                        autoCalculate: true,
+                        autoHighlight: true,
+                        parseMarkup: true,
+                        keyboardShortcuts: true,
+                        performanceMode: false,
+                        webAudioEnabled: true
+                    };
+                    
+                    updateState(defaults);
+                    localStorage.removeItem('speechrythm_state');
+                }
+                
+                return {
+                    updateState,
+                    getState,
+                    loadFromStorage,
+                    resetToDefaults
+                };
+            })();
+            
+            // ==================== MODULE: UTILITIES ====================
+            const Utils = (function() {
+                // Text analysis utilities
+                function countWords(text) {
+                    if (!text.trim()) return 0;
+                    return text.trim().split(/\s+/).length;
+                }
+                
+                function parseSentences(text) {
+                    if (!text.trim()) return [];
+                    
+                    // Basic sentence parsing (handles common cases)
+                    const sentenceRegex = /[^.!?]+[.!?]+/g;
+                    const matches = text.match(sentenceRegex);
+                    
+                    if (!matches) {
+                        // If no sentence-ending punctuation, treat whole text as one sentence
+                        return [{
+                            text: text.trim(),
+                            words: countWords(text),
+                            startIndex: 0,
+                            endIndex: text.length
+                        }];
+                    }
+                    
+                    return matches.map((sentence, index) => {
+                        const startIndex = text.indexOf(sentence);
+                        return {
+                            text: sentence.trim(),
+                            words: countWords(sentence),
+                            startIndex: startIndex,
+                            endIndex: startIndex + sentence.length
+                        };
+                    });
+                }
+                
+                function calculateReadingTime(words, wpm) {
+                    const minutes = words / wpm;
+                    const totalSeconds = Math.round(minutes * 60);
+                    const mins = Math.floor(totalSeconds / 60);
+                    const secs = totalSeconds % 60;
+                    
+                    return {
+                        minutes: mins,
+                        seconds: secs,
+                        totalSeconds: totalSeconds,
+                        formatted: `${mins}:${secs.toString().padStart(2, '0')}`
+                    };
+                }
+                
+                function formatTime(seconds) {
+                    const mins = Math.floor(Math.abs(seconds) / 60);
+                    const secs = Math.abs(seconds) % 60;
+                    const sign = seconds < 0 ? '-' : '';
+                    return `${sign}${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+                
+                function analyzeHeatmap(sentences) {
+                    if (!sentences.length) return [];
+                    
+                    const wordCounts = sentences.map(s => s.words);
+                    const maxWords = Math.max(...wordCounts);
+                    const minWords = Math.min(...wordCounts);
+                    
+                    return wordCounts.map(count => {
+                        if (maxWords === minWords) return 0.5;
+                        return (count - minWords) / (maxWords - minWords);
+                    });
+                }
+                
+                // Markup parsing
+                function parseMarkup(text) {
+                    // Simple markup parsing for practice cues
+                    const markupPatterns = [
+                        { pattern: /\(PAUSE\)/gi, type: 'pause', duration: 2 },
+                        { pattern: /\(SLOW\)/gi, type: 'slow', modifier: 0.7 },
+                        { pattern: /\(EMPHASIS\)/gi, type: 'emphasis' }
+                    ];
+                    
+                    let parsedText = text;
+                    const markers = [];
+                    
+                    markupPatterns.forEach(({ pattern, type, duration, modifier }) => {
+                        let match;
+                        while ((match = pattern.exec(text)) !== null) {
+                            markers.push({
+                                type: type,
+                                index: match.index,
+                                length: match[0].length,
+                                duration: duration,
+                                modifier: modifier
+                            });
+                        }
+                    });
+                    
+                    // Sort markers by index
+                    markers.sort((a, b) => a.index - b.index);
+                    
+                    // Remove markup from display text
+                    markupPatterns.forEach(({ pattern }) => {
+                        parsedText = parsedText.replace(pattern, '');
+                    });
+                    
+                    return {
+                        displayText: parsedText,
+                        markers: markers
+                    };
+                }
+                
+                // Export/Import utilities
+                function exportData(state, includeSettings = true, includeSections = true, includeHistory = false) {
+                    const exportObj = {
+                        version: '1.0',
+                        exportedAt: new Date().toISOString(),
+                        speech: state.speechText,
+                        config: {
+                            wpm: state.wordsPerMinute,
+                            targetTime: state.targetTimeMinutes,
+                            threshold: state.longSentenceThreshold
+                        }
+                    };
+                    
+                    if (includeSettings) {
+                        exportObj.settings = {
+                            theme: state.theme,
+                            fontSize: state.fontSize,
+                            lineHeight: state.lineHeight,
+                            showWordCount: state.showWordCount,
+                            showHeatmap: state.showHeatmap,
+                            autoCalculate: state.autoCalculate,
+                            autoHighlight: state.autoHighlight,
+                            parseMarkup: state.parseMarkup
+                        };
+                    }
+                    
+                    if (includeSections && state.sections.length > 0) {
+                        exportObj.sections = state.sections;
+                    }
+                    
+                    return JSON.stringify(exportObj, null, 2);
+                }
+                
+                function importData(jsonString) {
+                    try {
+                        const data = JSON.parse(jsonString);
+                        
+                        // Validate basic structure
+                        if (!data.version || !data.speech) {
+                            throw new Error('Invalid file format');
+                        }
+                        
+                        const updates = {
+                            speechText: data.speech
+                        };
+                        
+                        if (data.config) {
+                            updates.wordsPerMinute = data.config.wpm || 150;
+                            updates.targetTimeMinutes = data.config.targetTime || 10;
+                            updates.longSentenceThreshold = data.config.threshold || 25;
+                        }
+                        
+                        if (data.settings) {
+                            updates.theme = data.settings.theme || 'ocean';
+                            updates.fontSize = data.settings.fontSize || 1;
+                            updates.lineHeight = data.settings.lineHeight || 1.6;
+                            updates.showWordCount = data.settings.showWordCount !== undefined ? data.settings.showWordCount : true;
+                            updates.showHeatmap = data.settings.showHeatmap !== undefined ? data.settings.showHeatmap : true;
+                            updates.autoCalculate = data.settings.autoCalculate !== undefined ? data.settings.autoCalculate : true;
+                            updates.autoHighlight = data.settings.autoHighlight !== undefined ? data.settings.autoHighlight : true;
+                            updates.parseMarkup = data.settings.parseMarkup !== undefined ? data.settings.parseMarkup : true;
+                        }
+                        
+                        if (data.sections) {
+                            updates.sections = data.sections;
+                        }
+                        
+                        return updates;
+                    } catch (e) {
+                        console.error('Import error:', e);
+                        throw new Error('Failed to parse import file');
+                    }
+                }
+                
+                // File download utility
+                function downloadFile(filename, content, type = 'application/json') {
+                    const blob = new Blob([content], { type: type });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+                
+                // DOM utilities
+                function createElement(tag, classes = '', text = '') {
+                    const el = document.createElement(tag);
+                    if (classes) el.className = classes;
+                    if (text) el.textContent = text;
+                    return el;
+                }
+                
+                function debounce(func, wait) {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            func(...args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                }
+                
+                return {
+                    countWords,
+                    parseSentences,
+                    calculateReadingTime,
+                    formatTime,
+                    analyzeHeatmap,
+                    parseMarkup,
+                    exportData,
+                    importData,
+                    downloadFile,
+                    createElement,
+                    debounce
+                };
+            })();
+            
+            // ==================== MODULE: UI MANAGER ====================
+            const UIManager = (function() {
+                // DOM Elements cache
+                const elements = {};
+                
+                // Initialize DOM elements
+                function initElements() {
+                    // Core elements
+                    elements.speechInput = document.getElementById('speechInput');
+                    elements.timeDisplay = document.getElementById('timeDisplay');
+                    elements.wpmSlider = document.getElementById('wpmSlider');
+                    elements.wpmValue = document.getElementById('wpmValue');
+                    elements.targetTime = document.getElementById('targetTime');
+                    elements.targetTimeValue = document.getElementById('targetTimeValue');
+                    elements.progressFill = document.getElementById('progressFill');
+                    elements.progressText = document.getElementById('progressText');
+                    
+                    // Statistics
+                    elements.wordCount = document.getElementById('wordCount');
+                    elements.sentenceCount = document.getElementById('sentenceCount');
+                    elements.paragraphCount = document.getElementById('paragraphCount');
+                    elements.readingTime = document.getElementById('readingTime');
+                    
+                    // Long sentences
+                    elements.sentenceThreshold = document.getElementById('sentenceThreshold');
+                    elements.thresholdValue = document.getElementById('thresholdValue');
+                    elements.longSentenceCount = document.getElementById('longSentenceCount');
+                    elements.longSentencesList = document.getElementById('longSentencesList');
+                    
+                    // Heatmap
+                    elements.heatmapContainer = document.getElementById('heatmapContainer');
+                    
+                    // Practice
+                    elements.practiceBtn = document.getElementById('practiceBtn');
+                    elements.practiceOverlay = document.getElementById('practiceOverlay');
+                    elements.practiceTimer = document.getElementById('practiceTimer');
+                    elements.practicePrompter = document.getElementById('practicePrompter');
+                    elements.pacingTrack = document.getElementById('pacingTrack');
+                    elements.pacingDot = document.getElementById('pacingDot');
+                    elements.practicePlayBtn = document.getElementById('practicePlayBtn');
+                    elements.practicePauseBtn = document.getElementById('practicePauseBtn');
+                    elements.practiceResetBtn = document.getElementById('practiceResetBtn');
+                    elements.practiceExitBtn = document.getElementById('practiceExitBtn');
+                    elements.practiceModeLabel = document.getElementById('practiceModeLabel');
+                    
+                    // Practice settings
+                    elements.metronomeToggle = document.getElementById('metronomeToggle');
+                    elements.pacingDotToggle = document.getElementById('pacingDotToggle');
+                    elements.highlightToggle = document.getElementById('highlightToggle');
+                    elements.startPracticeBtn = document.getElementById('startPracticeBtn');
+                    
+                    // Sections
+                    elements.sectionsList = document.getElementById('sectionsList');
+                    elements.addSectionBtn = document.getElementById('addSectionBtn');
+                    
+                    // Theme
+                    elements.themeToggleBtn = document.getElementById('themeToggleBtn');
+                    elements.themeDropdown = document.getElementById('themeDropdown');
+                    
+                    // Modals
+                    elements.settingsBtn = document.getElementById('settingsBtn');
+                    elements.settingsModal = document.getElementById('settingsModal');
+                    elements.settingsCloseBtn = document.getElementById('settingsCloseBtn');
+                    elements.guideBtn = document.getElementById('guideBtn');
+                    elements.guideModal = document.getElementById('guideModal');
+                    elements.guideCloseBtn = document.getElementById('guideCloseBtn');
+                    elements.closeGuideBtn = document.getElementById('closeGuideBtn');
+                    
+                    // Import/Export
+                    elements.exportBtn = document.getElementById('exportBtn');
+                    elements.importBtn = document.getElementById('importBtn');
+                    elements.importExportModal = document.getElementById('importExportModal');
+                    elements.importExportCloseBtn = document.getElementById('importExportCloseBtn');
+                    
+                    // Other buttons
+                    elements.clearBtn = document.getElementById('clearBtn');
+                    elements.exampleBtn = document.getElementById('exampleBtn');
+                    
+                    // Settings modal elements
+                    elements.fontSizeSlider = document.getElementById('fontSizeSlider');
+                    elements.fontSizeValue = document.getElementById('fontSizeValue');
+                    elements.lineHeightSlider = document.getElementById('lineHeightSlider');
+                    elements.lineHeightValue = document.getElementById('lineHeightValue');
+                    elements.showWordCountToggle = document.getElementById('showWordCountToggle');
+                    elements.showHeatmapToggle = document.getElementById('showHeatmapToggle');
+                    elements.autosaveToggle = document.getElementById('autosaveToggle');
+                    elements.autoCalculateToggle = document.getElementById('autoCalculateToggle');
+                    elements.autoHighlightToggle = document.getElementById('autoHighlightToggle');
+                    elements.markupToggle = document.getElementById('markupToggle');
+                    elements.defaultWPM = document.getElementById('defaultWPM');
+                    elements.defaultWPMValue = document.getElementById('defaultWPMValue');
+                    elements.defaultTargetTime = document.getElementById('defaultTargetTime');
+                    elements.keyboardShortcutsToggle = document.getElementById('keyboardShortcutsToggle');
+                    elements.performanceModeToggle = document.getElementById('performanceModeToggle');
+                    elements.webAudioToggle = document.getElementById('webAudioToggle');
+                    elements.resetSettingsBtn = document.getElementById('resetSettingsBtn');
+                    elements.exportSettingsBtn = document.getElementById('exportSettingsBtn');
+                    elements.importSettingsBtn = document.getElementById('importSettingsBtn');
+                    elements.saveSettingsBtn = document.getElementById('saveSettingsBtn');
+                }
+                
+                // Update UI based on state
+                function updateUI(state) {
+                    // Update timing displays
+                    elements.wpmValue.textContent = `${state.wordsPerMinute} WPM`;
+                    elements.wpmSlider.value = state.wordsPerMinute;
+                    
+                    elements.targetTimeValue.textContent = `${state.targetTimeMinutes}:00`;
+                    elements.targetTime.value = state.targetTimeMinutes;
+                    
+                    // Update statistics
+                    elements.wordCount.textContent = state.words;
+                    elements.sentenceCount.textContent = state.sentences.length;
+                    
+                    // Calculate paragraph count
+                    const paragraphCount = state.speechText ? state.speechText.split(/\n\s*\n/).length : 0;
+                    elements.paragraphCount.textContent = paragraphCount;
+                    
+                    // Update reading time
+                    const time = Utils.calculateReadingTime(state.words, state.wordsPerMinute);
+                    elements.readingTime.textContent = time.formatted;
+                    elements.timeDisplay.textContent = time.formatted;
+                    
+                    // Update progress
+                    const targetSeconds = state.targetTimeMinutes * 60;
+                    const progress = Math.min(100, (time.totalSeconds / targetSeconds) * 100);
+                    elements.progressFill.style.width = `${progress}%`;
+                    elements.progressText.textContent = `${progress.toFixed(1)}% of target`;
+                    
+                    // Update threshold display
+                    elements.thresholdValue.textContent = `${state.longSentenceThreshold} words`;
+                    elements.sentenceThreshold.value = state.longSentenceThreshold;
+                    
+                    // Update long sentence count
+                    elements.longSentenceCount.textContent = state.longSentences.length;
+                    
+                    // Update practice mode display
+                    elements.practiceModeLabel.textContent = state.practiceMode.charAt(0).toUpperCase() + state.practiceMode.slice(1);
+                    
+                    // Update toggles
+                    elements.metronomeToggle.checked = state.metronomeEnabled;
+                    elements.pacingDotToggle.checked = state.pacingDotEnabled;
+                    elements.highlightToggle.checked = state.highlightActiveSentence;
+                    
+                    // Update settings toggles
+                    elements.showWordCountToggle.checked = state.showWordCount;
+                    elements.showHeatmapToggle.checked = state.showHeatmap;
+                    elements.autosaveToggle.checked = state.autoSave;
+                    elements.autoCalculateToggle.checked = state.autoCalculate;
+                    elements.autoHighlightToggle.checked = state.autoHighlight;
+                    elements.markupToggle.checked = state.parseMarkup;
+                    elements.keyboardShortcutsToggle.checked = state.keyboardShortcuts;
+                    elements.performanceModeToggle.checked = state.performanceMode;
+                    elements.webAudioToggle.checked = state.webAudioEnabled;
+                    
+                    // Update font size display
+                    const fontSizeLabels = ['Small', 'Medium', 'Large', 'Extra Large'];
+                    elements.fontSizeValue.textContent = fontSizeLabels[state.fontSize];
+                    elements.fontSizeSlider.value = state.fontSize;
+                    
+                    // Update line height display
+                    elements.lineHeightValue.textContent = state.lineHeight.toFixed(1);
+                    elements.lineHeightSlider.value = state.lineHeight * 10;
+                    
+                    // Update default WPM
+                    elements.defaultWPMValue.textContent = state.wordsPerMinute;
+                    elements.defaultWPM.value = state.wordsPerMinute;
+                    
+                    // Update default target time
+                    elements.defaultTargetTime.value = state.targetTimeMinutes;
+                    
+                    // Update practice mode pills
+                    document.querySelectorAll('[data-mode]').forEach(pill => {
+                        if (pill.dataset.mode === state.practiceMode) {
+                            pill.classList.add('active');
+                        } else {
+                            pill.classList.remove('active');
+                        }
+                    });
+                }
+                
+                // Render long sentences list
+                function renderLongSentences(sentences, threshold, activeIndex = -1) {
+                    elements.longSentencesList.innerHTML = '';
+                    
+                    if (sentences.length === 0) {
+                        const emptyMsg = Utils.createElement('div', 'text-center', '');
+                        emptyMsg.innerHTML = `
+                            <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: var(--space-sm); color: var(--color-secondary);"></i>
+                            <p>No sentences longer than ${threshold} words</p>
+                        `;
+                        emptyMsg.style.padding = 'var(--space-lg)';
+                        emptyMsg.style.color = 'var(--color-on-surface-variant)';
+                        elements.longSentencesList.appendChild(emptyMsg);
+                        return;
+                    }
+                    
+                    sentences.forEach((sentence, index) => {
+                        const sentenceEl = Utils.createElement('div', 'sentence-item');
+                        if (index === activeIndex) sentenceEl.classList.add('active');
+                        if (sentence.words > threshold) sentenceEl.classList.add('long');
+                        
+                        sentenceEl.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <span style="font-size: var(--font-size-sm);">${sentence.text.substring(0, 80)}${sentence.text.length > 80 ? '...' : ''}</span>
+                                <span class="badge ${sentence.words > threshold ? 'warning' : ''}">${sentence.words} words</span>
+                            </div>
+                        `;
+                        
+                        sentenceEl.addEventListener('click', () => {
+                            // Scroll to this sentence in the editor
+                            elements.speechInput.focus();
+                            elements.speechInput.setSelectionRange(sentence.startIndex, sentence.endIndex);
+                            
+                            // Highlight temporarily
+                            sentenceEl.classList.add('active');
+                            setTimeout(() => sentenceEl.classList.remove('active'), 2000);
+                        });
+                        
+                        elements.longSentencesList.appendChild(sentenceEl);
+                    });
+                }
+                
+                // Render heatmap
+                function renderHeatmap(heatmapData, sentences) {
+                    elements.heatmapContainer.innerHTML = '';
+                    
+                    if (!heatmapData.length || !sentences.length) return;
+                    
+                    heatmapData.forEach((intensity, index) => {
+                        const segment = Utils.createElement('div', 'heatmap-segment');
+                        segment.title = `Sentence ${index + 1}: ${sentences[index].words} words`;
+                        
+                        // Set color based on intensity
+                        if (intensity < 0.33) {
+                            segment.style.backgroundColor = 'var(--color-heatmap-low)';
+                        } else if (intensity < 0.66) {
+                            segment.style.backgroundColor = 'var(--color-heatmap-medium)';
+                        } else {
+                            segment.style.backgroundColor = 'var(--color-heatmap-high)';
+                        }
+                        
+                        segment.style.opacity = 0.7 + (intensity * 0.3);
+                        
+                        segment.addEventListener('click', () => {
+                            // Scroll to this sentence
+                            const sentence = sentences[index];
+                            elements.speechInput.focus();
+                            elements.speechInput.setSelectionRange(sentence.startIndex, sentence.endIndex);
+                            
+                            // Pulse animation
+                            segment.style.transform = 'scaleY(1.5)';
+                            setTimeout(() => segment.style.transform = 'scaleY(1)', 300);
+                        });
+                        
+                        elements.heatmapContainer.appendChild(segment);
+                    });
+                }
+                
+                // Render sections list
+                function renderSections(sections, currentIndex = -1) {
+                    elements.sectionsList.innerHTML = '';
+                    
+                    if (sections.length === 0) {
+                        const emptyMsg = Utils.createElement('div', 'text-center', '');
+                        emptyMsg.innerHTML = `
+                            <p style="color: var(--color-on-surface-variant);">No sections defined. Click "Add" to create your first section.</p>
+                        `;
+                        emptyMsg.style.padding = 'var(--space-md)';
+                        elements.sectionsList.appendChild(emptyMsg);
+                        return;
+                    }
+                    
+                    sections.forEach((section, index) => {
+                        const sectionEl = Utils.createElement('div', 'section-pill');
+                        if (index === currentIndex) sectionEl.classList.add('active');
+                        
+                        // Calculate section time
+                        const sectionWords = Utils.countWords(section.content);
+                        const time = Utils.calculateReadingTime(sectionWords, StateManager.getState().wordsPerMinute);
+                        
+                        sectionEl.innerHTML = `
+                            <div>
+                                <div style="font-weight: 500;">${section.name}</div>
+                                <div style="font-size: var(--font-size-sm); color: var(--color-on-surface-variant);">
+                                    ${sectionWords} words • ${time.formatted}
+                                </div>
+                            </div>
+                            <button class="badge outline delete-section" data-index="${index}" style="border: none; padding: var(--space-xs);">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        `;
+                        
+                        sectionEl.addEventListener('click', (e) => {
+                            if (!e.target.closest('.delete-section')) {
+                                // Select this section
+                                StateManager.updateState({ currentSectionIndex: index });
+                                
+                                // Load section content into editor
+                                elements.speechInput.value = section.content;
+                                elements.speechInput.dispatchEvent(new Event('input'));
+                            }
+                        });
+                        
+                        elements.sectionsList.appendChild(sectionEl);
+                    });
+                }
+                
+                // Render theme options
+                function renderThemeOptions(currentTheme) {
+                    elements.themeDropdown.innerHTML = '';
+                    
+                    const themes = [
+                        { id: 'ocean', name: 'Ocean Blue', colors: ['#1a73e8', '#34a853', '#fbbc04', '#ea4335'] },
+                        { id: 'dark', name: 'Dark Mode', colors: ['#8ab4f8', '#81c995', '#fdd663', '#f28b82'] },
+                        { id: 'nature', name: 'Nature Green', colors: ['#0b8043', '#f6bf26', '#e67c73', '#d50000'] },
+                        { id: 'sunset', name: 'Sunset Orange', colors: ['#e8710a', '#ea80fc', '#ffd54f', '#ff6f60'] },
+                        { id: 'midnight', name: 'Midnight Purple', colors: ['#bb86fc', '#03dac6', '#ffb74d', '#cf6679'] },
+                        { id: 'berry', name: 'Berry Pink', colors: ['#d81b60', '#ab47bc', '#ffca28', '#ff3d00'] },
+                        { id: 'oceanic', name: 'Oceanic Teal', colors: ['#00acc1', '#80deea', '#ffd600', '#ff8a65'] },
+                        { id: 'classic', name: 'Classic Indigo', colors: ['#5c6bc0', '#26a69a', '#ffa726', '#ef5350'] }
+                    ];
+                    
+                    themes.forEach(theme => {
+                        const option = Utils.createElement('div', 'theme-option');
+                        if (theme.id === currentTheme) option.classList.add('active');
+                        
+                        option.innerHTML = `
+                            <div class="theme-preview">
+                                ${theme.colors.map(color => 
+                                    `<div class="theme-color" style="background-color: ${color};"></div>`
+                                ).join('')}
+                            </div>
+                            <span style="font-size: var(--font-size-sm); font-weight: 500;">${theme.name}</span>
+                        `;
+                        
+                        option.addEventListener('click', () => {
+                            StateManager.updateState({ theme: theme.id });
+                            closeThemeDropdown();
+                        });
+                        
+                        elements.themeDropdown.appendChild(option);
+                    });
+                }
+                
+                // Toggle theme dropdown
+                function toggleThemeDropdown() {
+                    elements.themeDropdown.classList.toggle('active');
+                    
+                    // Close when clicking outside
+                    if (elements.themeDropdown.classList.contains('active')) {
+                        setTimeout(() => {
+                            document.addEventListener('click', closeThemeDropdownOnClick);
+                        }, 10);
+                    }
+                }
+                
+                function closeThemeDropdown() {
+                    elements.themeDropdown.classList.remove('active');
+                    document.removeEventListener('click', closeThemeDropdownOnClick);
+                }
+                
+                function closeThemeDropdownOnClick(e) {
+                    if (!elements.themeToggleBtn.contains(e.target) && !elements.themeDropdown.contains(e.target)) {
+                        closeThemeDropdown();
+                    }
+                }
+                
+                // Apply theme to document
+                function applyTheme(themeName) {
+                    document.documentElement.className = '';
+                    document.documentElement.classList.add(`theme-${themeName}`);
+                    renderThemeOptions(themeName);
+                }
+                
+                // Apply font size
+                function applyFontSize(size) {
+                    const sizes = [
+                        { xs: '0.75rem', sm: '0.875rem', md: '1rem', lg: '1.125rem', xl: '1.25rem', '2xl': '1.5rem', '3xl': '2rem', '4xl': '2.5rem' },
+                        { xs: '0.75rem', sm: '0.875rem', md: '1rem', lg: '1.125rem', xl: '1.25rem', '2xl': '1.5rem', '3xl': '2rem', '4xl': '2.5rem' },
+                        { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.5rem', '2xl': '1.75rem', '3xl': '2.25rem', '4xl': '3rem' },
+                        { xs: '1rem', sm: '1.125rem', md: '1.25rem', lg: '1.5rem', xl: '1.75rem', '2xl': '2rem', '3xl': '2.5rem', '4xl': '3.5rem' }
+                    ];
+                    
+                    const selected = sizes[size] || sizes[1];
+                    
+                    Object.keys(selected).forEach(key => {
+                        document.documentElement.style.setProperty(`--font-size-${key}`, selected[key]);
+                    });
+                }
+                
+                // Apply line height
+                function applyLineHeight(height) {
+                    elements.speechInput.style.lineHeight = height;
+                    
+                    // Also adjust practice prompter
+                    elements.practicePrompter.style.lineHeight = height;
+                }
+                
+                // Show/hide practice overlay
+                function togglePracticeOverlay(show) {
+                    if (show) {
+                        elements.practiceOverlay.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        elements.practiceOverlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                }
+                
+                // Update practice timer display
+                function updatePracticeTimer(seconds) {
+                    elements.practiceTimer.textContent = Utils.formatTime(seconds);
+                    
+                    // Update pacing dot position
+                    const state = StateManager.getState();
+                    const targetSeconds = state.targetTimeMinutes * 60;
+                    const progress = Math.min(1, Math.abs(seconds) / targetSeconds);
+                    
+                    const trackWidth = elements.pacingTrack.offsetWidth;
+                    const dotWidth = elements.pacingDot.offsetWidth;
+                    const maxPosition = trackWidth - dotWidth;
+                    
+                    let position;
+                    if (seconds >= 0) {
+                        // Moving forward
+                        position = progress * maxPosition;
+                        elements.pacingDot.style.backgroundColor = 'var(--color-primary)';
+                    } else {
+                        // Overtime (moving backward)
+                        position = maxPosition - (progress * maxPosition);
+                        elements.pacingDot.style.backgroundColor = 'var(--color-warning)';
+                    }
+                    
+                    elements.pacingDot.style.left = `${position}px`;
+                }
+                
+                // Render practice prompter with highlights
+                function renderPracticePrompter(text, sentences, activeIndex = -1, markers = []) {
+                    let html = '';
+                    let currentPos = 0;
+                    
+                    sentences.forEach((sentence, index) => {
+                        // Check for markers in this sentence range
+                        const sentenceMarkers = markers.filter(m => 
+                            m.index >= sentence.startIndex && m.index < sentence.endIndex
+                        );
+                        
+                        // Add sentence text with highlight if active
+                        const sentenceText = text.substring(sentence.startIndex, sentence.endIndex);
+                        const sentenceClass = index === activeIndex ? 'highlight active' : '';
+                        
+                        html += `<span class="${sentenceClass}" data-sentence-index="${index}">${sentenceText}</span>`;
+                        
+                        // Add marker indicators
+                        sentenceMarkers.forEach(marker => {
+                            let markerIcon = '';
+                            switch(marker.type) {
+                                case 'pause': markerIcon = '⏸'; break;
+                                case 'slow': markerIcon = '🐢'; break;
+                                case 'emphasis': markerIcon = '❗'; break;
+                            }
+                            html += ` <span class="badge" style="margin: 0 4px; font-size: 0.8em;" title="${marker.type}">${markerIcon}</span> `;
+                        });
+                        
+                        currentPos = sentence.endIndex;
+                    });
+                    
+                    // Add any remaining text after last sentence
+                    if (currentPos < text.length) {
+                        html += text.substring(currentPos);
+                    }
+                    
+                    elements.practicePrompter.innerHTML = html;
+                    
+                    // Scroll active sentence into view
+                    if (activeIndex >= 0) {
+                        const activeSpan = elements.practicePrompter.querySelector(`[data-sentence-index="${activeIndex}"]`);
+                        if (activeSpan) {
+                            activeSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                }
+                
+                // Show modal
+                function showModal(modalId) {
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        modal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+                
+                // Hide modal
+                function hideModal(modalId) {
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                }
+                
+                // Switch tab in modal
+                function switchTab(containerId, tabName) {
+                    // Update tab buttons
+                    document.querySelectorAll(`#${containerId} .tab`).forEach(tab => {
+                        if (tab.dataset.tab === tabName) {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    });
+                    
+                    // Show corresponding content
+                    document.querySelectorAll(`#${containerId} .tab-content`).forEach(content => {
+                        if (content.id === `${tabName}Tab`) {
+                            content.style.display = 'block';
+                        } else {
+                            content.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // Switch import/export tab
+                function switchIETab(tabName) {
+                    const title = document.getElementById('importExportTitle');
+                    const exportContent = document.getElementById('exportContent');
+                    const importContent = document.getElementById('importContent');
+                    
+                    // Update tab buttons
+                    document.querySelectorAll('[data-ie-tab]').forEach(tab => {
+                        if (tab.dataset.ieTab === tabName) {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    });
+                    
+                    if (tabName === 'export') {
+                        title.innerHTML = '<i class="fas fa-file-export"></i> Export Speech';
+                        exportContent.style.display = 'block';
+                        importContent.style.display = 'none';
+                    } else {
+                        title.innerHTML = '<i class="fas fa-file-import"></i> Import Speech';
+                        exportContent.style.display = 'none';
+                        importContent.style.display = 'block';
+                    }
+                }
+                
+                return {
+                    initElements,
+                    updateUI,
+                    renderLongSentences,
+                    renderHeatmap,
+                    renderSections,
+                    renderThemeOptions,
+                    toggleThemeDropdown,
+                    closeThemeDropdown,
+                    applyTheme,
+                    applyFontSize,
+                    applyLineHeight,
+                    togglePracticeOverlay,
+                    updatePracticeTimer,
+                    renderPracticePrompter,
+                    showModal,
+                    hideModal,
+                    switchTab,
+                    switchIETab,
+                    elements
+                };
+            })();
+            
+            // ==================== MODULE: PRACTICE MANAGER ====================
+            const PracticeManager = (function() {
+                let audioContext = null;
+                let metronomeInterval = null;
+                let lastClickTime = 0;
+                
+                // Initialize audio context (user gesture required)
+                function initAudio() {
+                    if (!audioContext && StateManager.getState().webAudioEnabled) {
+                        try {
+                            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        } catch (e) {
+                            console.warn('Web Audio API not supported:', e);
+                            StateManager.updateState({ webAudioEnabled: false });
+                        }
+                    }
+                    return audioContext;
+                }
+                
+                // Play metronome click
+                function playMetronomeClick() {
+                    const state = StateManager.getState();
+                    if (!state.metronomeEnabled || !state.webAudioEnabled) return;
+                    
+                    const ctx = initAudio();
+                    if (!ctx) return;
+                    
+                    // Create oscillator for click sound
+                    const oscillator = ctx.createOscillator();
+                    const gainNode = ctx.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(ctx.destination);
+                    
+                    // Configure sound
+                    oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                    
+                    // Play sound
+                    oscillator.start();
+                    oscillator.stop(ctx.currentTime + 0.1);
+                }
+                
+                // Start metronome
+                function startMetronome(wpm) {
+                    stopMetronome();
+                    
+                    const state = StateManager.getState();
+                    if (!state.metronomeEnabled) return;
+                    
+                    // Calculate interval in milliseconds
+                    const interval = 60000 / wpm; // ms per word
+                    
+                    lastClickTime = Date.now();
+                    playMetronomeClick();
+                    
+                    metronomeInterval = setInterval(() => {
+                        playMetronomeClick();
+                        lastClickTime = Date.now();
+                    }, interval);
+                }
+                
+                // Stop metronome
+                function stopMetronome() {
+                    if (metronomeInterval) {
+                        clearInterval(metronomeInterval);
+                        metronomeInterval = null;
+                    }
+                }
+                
+                // Start practice session
+                function startPractice() {
+                    const state = StateManager.getState();
+                    
+                    // Reset practice state
+                    StateManager.updateState({
+                        isPracticing: true,
+                        practiceTimer: 0,
+                        currentSentenceIndex: 0
+                    });
+                    
+                    // Show practice overlay
+                    UIManager.togglePracticeOverlay(true);
+                    
+                    // Update UI for practice start
+                    UIManager.elements.practicePlayBtn.disabled = true;
+                    UIManager.elements.practicePauseBtn.disabled = false;
+                    
+                    // Start metronome if enabled
+                    if (state.metronomeEnabled) {
+                        startMetronome(state.wordsPerMinute);
+                    }
+                    
+                    // Start timer
+                    const startTime = Date.now();
+                    const timerInterval = setInterval(() => {
+                        if (!state.isPracticing) {
+                            clearInterval(timerInterval);
+                            return;
+                        }
+                        
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        StateManager.updateState({ practiceTimer: elapsed });
+                        
+                        // Update which sentence should be active based on timing
+                        updateActiveSentence(elapsed, state);
+                    }, 100);
+                    
+                    // Store interval ID in state (simplified approach)
+                    StateManager.updateState({ practiceInterval: timerInterval });
+                }
+                
+                // Update active sentence based on elapsed time
+                function updateActiveSentence(elapsedSeconds, state) {
+                    if (!state.sentences.length) return;
+                    
+                    // Calculate expected word count by now
+                    const expectedWords = (state.wordsPerMinute / 60) * elapsedSeconds;
+                    
+                    // Find which sentence we should be at
+                    let wordCount = 0;
+                    let newIndex = 0;
+                    
+                    for (let i = 0; i < state.sentences.length; i++) {
+                        wordCount += state.sentences[i].words;
+                        if (wordCount >= expectedWords) {
+                            newIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    if (newIndex !== state.currentSentenceIndex) {
+                        StateManager.updateState({ currentSentenceIndex: newIndex });
+                        
+                        // Update practice prompter
+                        const parsed = Utils.parseMarkup(state.speechText);
+                        UIManager.renderPracticePrompter(
+                            parsed.displayText,
+                            state.sentences,
+                            newIndex,
+                            parsed.markers
+                        );
+                    }
+                }
+                
+                // Pause practice
+                function pausePractice() {
+                    const state = StateManager.getState();
+                    
+                    StateManager.updateState({ isPracticing: false });
+                    stopMetronome();
+                    
+                    // Update UI
+                    UIManager.elements.practicePlayBtn.disabled = false;
+                    UIManager.elements.practicePauseBtn.disabled = true;
+                    
+                    // Clear interval
+                    if (state.practiceInterval) {
+                        clearInterval(state.practiceInterval);
+                        StateManager.updateState({ practiceInterval: null });
+                    }
+                }
+                
+                // Reset practice
+                function resetPractice() {
+                    pausePractice();
+                    StateManager.updateState({
+                        practiceTimer: 0,
+                        currentSentenceIndex: 0
+                    });
+                    
+                    // Update practice prompter
+                    const state = StateManager.getState();
+                    const parsed = Utils.parseMarkup(state.speechText);
+                    UIManager.renderPracticePrompter(
+                        parsed.displayText,
+                        state.sentences,
+                        0,
+                        parsed.markers
+                    );
+                }
+                
+                // Exit practice
+                function exitPractice() {
+                    pausePractice();
+                    UIManager.togglePracticeOverlay(false);
+                    StateManager.updateState({ isPracticing: false });
+                }
+                
+                return {
+                    startPractice,
+                    pausePractice,
+                    resetPractice,
+                    exitPractice,
+                    startMetronome,
+                    stopMetronome,
+                    initAudio
+                };
+            })();
+            
+            // ==================== MODULE: EVENT HANDLERS ====================
+            const EventHandlers = (function() {
+                // Initialize all event listeners
+                function initEventListeners() {
+                    const ui = UIManager.elements;
+                    
+                    // Speech input
+                    ui.speechInput.addEventListener('input', Utils.debounce(handleSpeechInput, 300));
+                    
+                    // WPM slider
+                    ui.wpmSlider.addEventListener('input', handleWPMChange);
+                    
+                    // Target time slider
+                    ui.targetTime.addEventListener('input', handleTargetTimeChange);
+                    
+                    // Sentence threshold slider
+                    ui.sentenceThreshold.addEventListener('input', handleThresholdChange);
+                    
+                    // Practice buttons
+                    ui.practiceBtn.addEventListener('click', handlePracticeButton);
+                    ui.startPracticeBtn.addEventListener('click', handleStartPractice);
+                    
+                    // Practice control buttons
+                    ui.practicePlayBtn.addEventListener('click', PracticeManager.startPractice);
+                    ui.practicePauseBtn.addEventListener('click', PracticeManager.pausePractice);
+                    ui.practiceResetBtn.addEventListener('click', PracticeManager.resetPractice);
+                    ui.practiceExitBtn.addEventListener('click', PracticeManager.exitPractice);
+                    
+                    // Practice toggles
+                    ui.metronomeToggle.addEventListener('change', handleMetronomeToggle);
+                    ui.pacingDotToggle.addEventListener('change', handlePacingDotToggle);
+                    ui.highlightToggle.addEventListener('change', handleHighlightToggle);
+                    
+                    // Practice mode pills
+                    document.querySelectorAll('[data-mode]').forEach(pill => {
+                        pill.addEventListener('click', handlePracticeModeChange);
+                    });
+                    
+                    // Sections
+                    ui.addSectionBtn.addEventListener('click', handleAddSection);
+                    
+                    // Theme
+                    ui.themeToggleBtn.addEventListener('click', UIManager.toggleThemeDropdown);
+                    
+                    // Modals
+                    ui.settingsBtn.addEventListener('click', () => UIManager.showModal('settingsModal'));
+                    ui.settingsCloseBtn.addEventListener('click', () => UIManager.hideModal('settingsModal'));
+                    ui.guideBtn.addEventListener('click', () => UIManager.showModal('guideModal'));
+                    ui.guideCloseBtn.addEventListener('click', () => UIManager.hideModal('guideModal'));
+                    ui.closeGuideBtn.addEventListener('click', () => UIManager.hideModal('guideModal'));
+                    
+                    // Import/Export
+                    ui.exportBtn.addEventListener('click', handleExportClick);
+                    ui.importBtn.addEventListener('click', handleImportClick);
+                    ui.importExportCloseBtn.addEventListener('click', () => UIManager.hideModal('importExportModal'));
+                    
+                    // Import/Export tabs
+                    document.querySelectorAll('[data-ie-tab]').forEach(tab => {
+                        tab.addEventListener('click', () => UIManager.switchIETab(tab.dataset.ieTab));
+                    });
+                    
+                    // Settings tabs
+                    document.querySelectorAll('[data-tab]').forEach(tab => {
+                        tab.addEventListener('click', () => UIManager.switchTab('settingsModal', tab.dataset.tab));
+                    });
+                    
+                    // Other buttons
+                    ui.clearBtn.addEventListener('click', handleClear);
+                    ui.exampleBtn.addEventListener('click', loadExampleSpeech);
+                    
+                    // Settings modal controls
+                    ui.fontSizeSlider.addEventListener('input', handleFontSizeChange);
+                    ui.lineHeightSlider.addEventListener('input', handleLineHeightChange);
+                    ui.defaultWPM.addEventListener('input', handleDefaultWPMChange);
+                    ui.resetSettingsBtn.addEventListener('click', handleResetSettings);
+                    ui.exportSettingsBtn.addEventListener('click', handleExportSettings);
+                    ui.importSettingsBtn.addEventListener('click', handleImportSettings);
+                    ui.saveSettingsBtn.addEventListener('click', handleSaveSettings);
+                    
+                    // Import/Export modal controls
+                    document.getElementById('generateExportBtn').addEventListener('click', handleGenerateExport);
+                    document.getElementById('importFile').addEventListener('change', handleImportFileSelect);
+                    document.getElementById('performImportBtn').addEventListener('click', handlePerformImport);
+                    
+                    // Footer links
+                    document.getElementById('guideLink').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        UIManager.showModal('guideModal');
+                    });
+                    
+                    // Keyboard shortcuts
+                    document.addEventListener('keydown', handleKeyboardShortcuts);
+                    
+                    // Close modals on overlay click
+                    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                        overlay.addEventListener('click', (e) => {
+                            if (e.target === overlay) {
+                                UIManager.hideModal(overlay.id);
+                            }
+                        });
+                    });
+                    
+                    // State change listener
+                    window.addEventListener('statechange', handleStateChange);
+                }
+                
+                // Event handler functions
+                function handleSpeechInput() {
+                    const text = UIManager.elements.speechInput.value;
+                    StateManager.updateState({ speechText: text });
+                }
+                
+                function handleWPMChange() {
+                    const wpm = parseInt(UIManager.elements.wpmSlider.value);
+                    StateManager.updateState({ wordsPerMinute: wpm });
+                }
+                
+                function handleTargetTimeChange() {
+                    const minutes = parseInt(UIManager.elements.targetTime.value);
+                    StateManager.updateState({ targetTimeMinutes: minutes });
+                }
+                
+                function handleThresholdChange() {
+                    const threshold = parseInt(UIManager.elements.sentenceThreshold.value);
+                    StateManager.updateState({ longSentenceThreshold: threshold });
+                }
+                
+                function handlePracticeButton() {
+                    const state = StateManager.getState();
+                    if (!state.speechText.trim()) {
+                        alert('Please enter a speech to practice.');
+                        return;
+                    }
+                    
+                    // Initialize practice session
+                    UIManager.togglePracticeOverlay(true);
+                    
+                    // Render practice prompter
+                    const parsed = Utils.parseMarkup(state.speechText);
+                    UIManager.renderPracticePrompter(
+                        parsed.displayText,
+                        state.sentences,
+                        0,
+                        parsed.markers
+                    );
+                }
+                
+                function handleStartPractice() {
+                    PracticeManager.startPractice();
+                }
+                
+                function handleMetronomeToggle() {
+                    const enabled = UIManager.elements.metronomeToggle.checked;
+                    StateManager.updateState({ metronomeEnabled: enabled });
+                }
+                
+                function handlePacingDotToggle() {
+                    const enabled = UIManager.elements.pacingDotToggle.checked;
+                    StateManager.updateState({ pacingDotEnabled: enabled });
+                }
+                
+                function handleHighlightToggle() {
+                    const enabled = UIManager.elements.highlightToggle.checked;
+                    StateManager.updateState({ highlightActiveSentence: enabled });
+                }
+                
+                function handlePracticeModeChange(e) {
+                    const mode = e.currentTarget.dataset.mode;
+                    StateManager.updateState({ practiceMode: mode });
+                }
+                
+                function handleAddSection() {
+                    const state = StateManager.getState();
+                    const sectionName = prompt('Enter section name:', `Section ${state.sections.length + 1}`);
+                    
+                    if (sectionName) {
+                        const newSection = {
+                            name: sectionName,
+                            content: state.speechText,
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        const updatedSections = [...state.sections, newSection];
+                        StateManager.updateState({ sections: updatedSections });
+                    }
+                }
+                
+                function handleExportClick() {
+                    UIManager.showModal('importExportModal');
+                    UIManager.switchIETab('export');
+                }
+                
+                function handleImportClick() {
+                    UIManager.showModal('importExportModal');
+                    UIManager.switchIETab('import');
+                }
+                
+                function handleClear() {
+                    if (confirm('Clear the current speech? This cannot be undone.')) {
+                        StateManager.updateState({ speechText: '' });
+                        UIManager.elements.speechInput.value = '';
+                    }
+                }
+                
+                function loadExampleSpeech() {
+                    const example = `Good morning, everyone. Thank you for being here today.
+
+I want to talk about something important: the power of clear communication. (PAUSE)
+
+In our fast-paced world, we often rush through our words without considering their impact. (SLOW) But when we take the time to speak clearly and thoughtfully, we can inspire change, build connections, and share ideas that matter.
+
+Think about the last presentation you attended. What made it memorable? Was it the data? The slides? Or was it the speaker's passion and clarity?
+
+Today, I'll share three simple techniques to improve your public speaking:
+First, know your audience. Second, structure your message. Third, practice with intention.
+
+Let me leave you with this thought: Words have power. Use them wisely. Thank you.`;
+                    
+                    StateManager.updateState({ speechText: example });
+                    UIManager.elements.speechInput.value = example;
+                }
+                
+                function handleFontSizeChange() {
+                    const size = parseInt(UIManager.elements.fontSizeSlider.value);
+                    UIManager.applyFontSize(size);
+                }
+                
+                function handleLineHeightChange() {
+                    const value = parseInt(UIManager.elements.lineHeightSlider.value);
+                    const lineHeight = value / 10;
+                    UIManager.applyLineHeight(lineHeight);
+                }
+                
+                function handleDefaultWPMChange() {
+                    const wpm = parseInt(UIManager.elements.defaultWPM.value);
+                    UIManager.elements.defaultWPMValue.textContent = wpm;
+                }
+                
+                function handleResetSettings() {
+                    if (confirm('Reset all settings to defaults?')) {
+                        StateManager.resetToDefaults();
+                        // Close and reopen modal to refresh
+                        UIManager.hideModal('settingsModal');
+                        setTimeout(() => UIManager.showModal('settingsModal'), 50);
+                    }
+                }
+                
+                function handleExportSettings() {
+                    const state = StateManager.getState();
+                    const exportData = Utils.exportData(state, true, false, false);
+                    const filename = `speechrythm_settings_${new Date().toISOString().split('T')[0]}.json`;
+                    Utils.downloadFile(filename, exportData);
+                }
+                
+                function handleImportSettings() {
+                    document.getElementById('hiddenImportFile').click();
+                }
+                
+                function handleSaveSettings() {
+                    const updates = {
+                        theme: StateManager.getState().theme, // Keep current theme
+                        fontSize: parseInt(UIManager.elements.fontSizeSlider.value),
+                        lineHeight: parseInt(UIManager.elements.lineHeightSlider.value) / 10,
+                        showWordCount: UIManager.elements.showWordCountToggle.checked,
+                        showHeatmap: UIManager.elements.showHeatmapToggle.checked,
+                        autoSave: UIManager.elements.autosaveToggle.checked,
+                        autoCalculate: UIManager.elements.autoCalculateToggle.checked,
+                        autoHighlight: UIManager.elements.autoHighlightToggle.checked,
+                        parseMarkup: UIManager.elements.markupToggle.checked,
+                        wordsPerMinute: parseInt(UIManager.elements.defaultWPM.value),
+                        targetTimeMinutes: parseInt(UIManager.elements.defaultTargetTime.value),
+                        keyboardShortcuts: UIManager.elements.keyboardShortcutsToggle.checked,
+                        performanceMode: UIManager.elements.performanceModeToggle.checked,
+                        webAudioEnabled: UIManager.elements.webAudioToggle.checked
+                    };
+                    
+                    StateManager.updateState(updates);
+                    UIManager.hideModal('settingsModal');
+                }
+                
+                function handleGenerateExport() {
+                    const state = StateManager.getState();
+                    const includeSettings = document.getElementById('includeSettingsToggle').checked;
+                    const includeSections = document.getElementById('includeSectionsToggle').checked;
+                    const includeHistory = document.getElementById('includeHistoryToggle').checked;
+                    
+                    const exportData = Utils.exportData(state, includeSettings, includeSections, includeHistory);
+                    const filename = `speechrythm_${new Date().toISOString().split('T')[0]}.json`;
+                    
+                    Utils.downloadFile(filename, exportData);
+                    UIManager.hideModal('importExportModal');
+                }
+                
+                function handleImportFileSelect(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const updates = Utils.importData(event.target.result);
+                            
+                            // Show preview
+                            const preview = document.getElementById('importPreview');
+                            const previewText = document.getElementById('importPreviewText');
+                            const warning = document.getElementById('importWarning');
+                            const importBtn = document.getElementById('performImportBtn');
+                            
+                            previewText.textContent = `Speech: ${updates.speechText.substring(0, 100)}...`;
+                            preview.style.display = 'block';
+                            warning.style.display = 'block';
+                            importBtn.disabled = false;
+                            
+                            // Store import data temporarily
+                            importBtn.dataset.importData = event.target.result;
+                        } catch (error) {
+                            alert(`Error reading file: ${error.message}`);
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                }
+                
+                function handlePerformImport() {
+                    const importBtn = document.getElementById('performImportBtn');
+                    const importData = importBtn.dataset.importData;
+                    
+                    if (!importData) return;
+                    
+                    try {
+                        const updates = Utils.importData(importData);
+                        StateManager.updateState(updates);
+                        
+                        // Update textarea
+                        UIManager.elements.speechInput.value = updates.speechText;
+                        
+                        UIManager.hideModal('importExportModal');
+                        alert('Import successful!');
+                    } catch (error) {
+                        alert(`Import failed: ${error.message}`);
+                    }
+                }
+                
+                function handleKeyboardShortcuts(e) {
+                    const state = StateManager.getState();
+                    if (!state.keyboardShortcuts) return;
+                    
+                    // Don't trigger if typing in input/textarea
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    
+                    // Ctrl/Cmd + S: Save/Export
+                    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                        e.preventDefault();
+                        handleExportClick();
+                    }
+                    
+                    // Ctrl/Cmd + E: Toggle practice
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                        e.preventDefault();
+                        handlePracticeButton();
+                    }
+                    
+                    // Ctrl/Cmd + L: Clear
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                        e.preventDefault();
+                        handleClear();
+                    }
+                    
+                    // Ctrl/Cmd + ?: Help
+                    if ((e.ctrlKey || e.metaKey) && e.key === '?') {
+                        e.preventDefault();
+                        UIManager.showModal('guideModal');
+                    }
+                    
+                    // Escape: Close modals or exit practice
+                    if (e.key === 'Escape') {
+                        if (state.isPracticing) {
+                            PracticeManager.exitPractice();
+                        } else {
+                            // Close any open modal
+                            const openModal = document.querySelector('.modal-overlay.active');
+                            if (openModal) {
+                                UIManager.hideModal(openModal.id);
+                            }
+                            UIManager.closeThemeDropdown();
+                        }
+                    }
+                }
+                
+                function handleStateChange(e) {
+                    const state = StateManager.getState();
+                    const updates = e.detail;
+                    
+                    // Update UI
+                    UIManager.updateUI(state);
+                    
+                    // If speech text changed, recalculate everything
+                    if ('speechText' in updates) {
+                        const words = Utils.countWords(state.speechText);
+                        const sentences = Utils.parseSentences(state.speechText);
+                        const readingTime = Utils.calculateReadingTime(words, state.wordsPerMinute);
+                        const longSentences = sentences.filter(s => s.words > state.longSentenceThreshold);
+                        const heatmapData = Utils.analyzeHeatmap(sentences);
+                        
+                        StateManager.updateState({
+                            words: words,
+                            sentences: sentences,
+                            readingTimeSeconds: readingTime.totalSeconds,
+                            longSentences: longSentences,
+                            heatmapData: heatmapData
+                        });
+                        
+                        // Update long sentences list
+                        UIManager.renderLongSentences(sentences, state.longSentenceThreshold);
+                        
+                        // Update heatmap
+                        if (state.showHeatmap) {
+                            UIManager.renderHeatmap(heatmapData, sentences);
+                        }
+                        
+                        // Update sections list
+                        UIManager.renderSections(state.sections, state.currentSectionIndex);
+                    }
+                    
+                    // If sentences or threshold changed, update long sentences
+                    if ('sentences' in updates || 'longSentenceThreshold' in updates) {
+                        const longSentences = state.sentences.filter(s => s.words > state.longSentenceThreshold);
+                        StateManager.updateState({ longSentences: longSentences });
+                        UIManager.renderLongSentences(state.sentences, state.longSentenceThreshold, state.currentSentenceIndex);
+                    }
+                    
+                    // If heatmap data changed and showing, update heatmap
+                    if ('heatmapData' in updates && state.showHeatmap) {
+                        UIManager.renderHeatmap(state.heatmapData, state.sentences);
+                    }
+                    
+                    // If sections changed, update sections list
+                    if ('sections' in updates) {
+                        UIManager.renderSections(state.sections, state.currentSectionIndex);
+                    }
+                    
+                    // If theme changed, apply it
+                    if ('theme' in updates) {
+                        UIManager.applyTheme(state.theme);
+                    }
+                    
+                    // If font size changed, apply it
+                    if ('fontSize' in updates) {
+                        UIManager.applyFontSize(state.fontSize);
+                    }
+                    
+                    // If line height changed, apply it
+                    if ('lineHeight' in updates) {
+                        UIManager.applyLineHeight(state.lineHeight);
+                    }
+                    
+                    // If showHeatmap changed, show/hide heatmap
+                    if ('showHeatmap' in updates) {
+                        if (state.showHeatmap && state.heatmapData.length > 0) {
+                            UIManager.renderHeatmap(state.heatmapData, state.sentences);
+                        } else {
+                            UIManager.elements.heatmapContainer.innerHTML = '';
+                        }
+                    }
+                    
+                    // If practice timer changed, update display
+                    if ('practiceTimer' in updates) {
+                        UIManager.updatePracticeTimer(state.practiceTimer);
+                    }
+                    
+                    // If current sentence index changed, update practice prompter
+                    if ('currentSentenceIndex' in updates && state.isPracticing) {
+                        const parsed = Utils.parseMarkup(state.speechText);
+                        UIManager.renderPracticePrompter(
+                            parsed.displayText,
+                            state.sentences,
+                            state.currentSentenceIndex,
+                            parsed.markers
+                        );
+                    }
+                }
+                
+                return {
+                    initEventListeners
+                };
+            })();
+            
+            // ==================== INITIALIZATION ====================
+            function initApp() {
+                // Initialize modules
+                UIManager.initElements();
+                EventHandlers.initEventListeners();
+                
+                // Load saved state
+                StateManager.loadFromStorage();
+                
+                // Initialize with current state
+                const initialState = StateManager.getState();
+                
+                // Apply theme
+                UIManager.applyTheme(initialState.theme);
+                
+                // Apply font size
+                UIManager.applyFontSize(initialState.fontSize);
+                
+                // Apply line height
+                UIManager.applyLineHeight(initialState.lineHeight);
+                
+                // Set initial speech text if loaded
+                if (initialState.speechText) {
+                    UIManager.elements.speechInput.value = initialState.speechText;
+                    
+                    // Trigger initial calculation
+                    const words = Utils.countWords(initialState.speechText);
+                    const sentences = Utils.parseSentences(initialState.speechText);
+                    const readingTime = Utils.calculateReadingTime(words, initialState.wordsPerMinute);
+                    const longSentences = sentences.filter(s => s.words > initialState.longSentenceThreshold);
+                    const heatmapData = Utils.analyzeHeatmap(sentences);
+                    
+                    StateManager.updateState({
+                        words: words,
+                        sentences: sentences,
+                        readingTimeSeconds: readingTime.totalSeconds,
+                        longSentences: longSentences,
+                        heatmapData: heatmapData
+                    });
+                    
+                    // Render initial UI
+                    UIManager.updateUI(initialState);
+                    UIManager.renderLongSentences(sentences, initialState.longSentenceThreshold);
+                    
+                    if (initialState.showHeatmap) {
+                        UIManager.renderHeatmap(heatmapData, sentences);
+                    }
+                    
+                    UIManager.renderSections(initialState.sections, initialState.currentSectionIndex);
+                }
+                
+                // Render theme options
+                UIManager.renderThemeOptions(initialState.theme);
+                
+                // Initialize Web Audio (requires user gesture)
+                document.addEventListener('click', function initAudioOnClick() {
+                    PracticeManager.initAudio();
+                    document.removeEventListener('click', initAudioOnClick);
+                }, { once: true });
+                
+                console.log('SpeechRythm initialized successfully');
+            }
+            
+            // Start the application when DOM is loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initApp);
+            } else {
+                initApp();
+            }
+            
+            // Make modules accessible for debugging (optional)
+            window.SpeechRythm = {
+                StateManager,
+                Utils,
+                UIManager,
+                PracticeManager,
+                EventHandlers
+            };
+            
+        })();
+    </script>
+</body>
+</html>
